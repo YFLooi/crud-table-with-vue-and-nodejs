@@ -1,6 +1,8 @@
 ## For backend
 backend/node_modules
 backend/keys
+backend/built
+backend/dist
 
 ## For web
 .DS_Store

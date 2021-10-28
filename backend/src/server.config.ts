@@ -1,6 +1,6 @@
 let mongoCredentialsFromKeyFile = { username: "", password: "" };
 try {
-  mongoCredentialsFromKeyFile = require("../../keys/mongo.json");
+  mongoCredentialsFromKeyFile = require("../keys/mongo.json");
 } catch (err) {
   console.error("could not read mongo key file");
 }
