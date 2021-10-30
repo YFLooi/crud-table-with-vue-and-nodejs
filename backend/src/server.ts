@@ -1,36 +1,31 @@
-import mongoose from "mongoose";
-import express, { Request, Response } from "express";
-import { constructMongoConnection } from "./server.config";
+const express = require("express");
+import { Request, Response } from "express";
 import _ from "lodash";
-import CustomerRouter from "./customer/customer.route";
 import cors from "cors";
+import CustomerRouter from "./customer/customer.route";
+import { mongooseConnect } from "./server.config";
+require("dotenv").config();
 
 const server = express();
-const port = 4000;
+const port = 5000;
 
-server.use(cors);
+// Initiates connection to db
+mongooseConnect();
+
+server.use(cors());
 server.use(express.json());
-server.use(express.urlencoded({ extended: false }));
-
-// Connecting to database
-const mongoConnectionString = constructMongoConnection();
-mongoose.Promise = global.Promise;
-
-mongoose.connect(mongoConnectionString, {}, function (error: any) {
-  if (error) {
-    console.log("Error!" + error);
-  } else {
-    console.log("Connected to MongoDB Atlas database");
-  }
+server.use(express.urlencoded({ extended: true }));
+// Error handler
+server.use(function (
+  err: { status: any; message: any },
+  req: any,
+  res: Response,
+  next: any
+) {
+  return res.status(err.status || 500).json({ errMsg: err.message });
 });
 
-// server.use("/customer", CustomerRouter);
-server.get(`/`, async (req: Request, res: Response) => {
-  const message = `Request to server received!`;
-  console.log(message);
-
-  res.status(200).json({ message: message });
-});
+server.use("/customer", CustomerRouter);
 
 server.listen(port, () => {
   console.log(`Server is listening on http://localhost:${port}`);

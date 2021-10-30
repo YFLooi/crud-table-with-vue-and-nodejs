@@ -1,22 +1,28 @@
 <template>
   <div>
     <h1>Customer management system</h1>
-    <customer-table />
+    <customer-table :customers="customers" @getCustomers="getCustomers" />
+    <customer-details />
   </div>
 </template>
 
 <script>
   import CustomerTable from "./components/CustomerTable.vue";
+  import CustomerDetails from "./components/CustomerDetails.vue";
 
   export default {
     name: "App",
     components: {
       CustomerTable,
+      CustomerDetails,
     },
-    data() {},
+    data() {
+      return {
+        customers: [],
+      };
+    },
     methods: {
       async getCustomers() {
-        let customers;
         try {
           const response = await fetch(
             "http://localhost:5000/customer/get-customers",
@@ -26,16 +32,16 @@
               headers: { "Content-type": "application/json; charset=UTF-8" },
             }
           );
-          customers = await response.json();
+          const customers = await response.json();
 
           console.log(
             `Sample of customer retrieved on component mount: ${JSON.stringify(
-              [customers[0], customers[1]],
+              [customers[0], customers[5]],
               null,
               2
             )}`
           );
-          // this.employees = data;
+          this.customers = customers;
         } catch (error) {
           console.error(
             `Unable to retrive customer info. Err: ${error.message}`

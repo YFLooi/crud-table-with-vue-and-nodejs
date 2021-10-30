@@ -1,9 +1,10 @@
 import { Request, Response, Router } from "express";
-import { body } from "express-validator";
+import { body, validationResult } from "express-validator";
 import CustomerModel from "./customer.model";
 import _ from "lodash";
 import { TradingPermissions } from "./customer.type";
 import { getExistingCustomerProfile } from "./customer.service";
+import { expressErrorValidation } from "../express-validator";
 
 const CustomerRouter = Router();
 
@@ -12,9 +13,8 @@ CustomerRouter.post(
   body("name").isString(),
   body("email").isEmail(),
   body("mobileNum").isString().optional(),
-  body("tradingPermissions")
-    .isArray()
-    .contains(Object.values(TradingPermissions)),
+  body("tradingPermissions").isArray().isIn(Object.values(TradingPermissions)),
+  expressErrorValidation,
   async (req: Request, res: Response) => {
     const { name, email, mobileNum, tradingPermissions } = req.body;
 

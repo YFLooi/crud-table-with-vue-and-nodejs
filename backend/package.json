@@ -1,12 +1,13 @@
 {
   "name": "crud-table-backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "./dist/server.js",
   "author": "YFLooi",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.13.0",
     "lodash": "^4.17.21",
@@ -19,7 +20,7 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-validator": "^3.0.0",
-    "@types/lodash": "^4.14.175",
+    "@types/lodash": "^4.14.176",
     "@types/mongoose": "^5.11.97",
     "@types/mongoose-unique-validator": "^1.0.5",
     "@types/node": "^16.10.3"
