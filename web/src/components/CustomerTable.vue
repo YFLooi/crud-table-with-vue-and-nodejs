@@ -111,11 +111,10 @@
 
   export default {
     name: "CustomerTable",
-    props: {},
     data() {
       return {
         customers: [],
-        numRowsPerPage: 5,
+        numRowsPerPage: 10,
         currentPageStartRowNum: 0,
         currentRows: [],
         selectedCustomersDetails: {},
@@ -137,7 +136,7 @@
           const result = await response.json();
 
           if (response.status == "200") {
-            console.log(`Sucessfully deleted customer ${customerId}`);
+            console.log(`Sucessfully deleted customer`);
 
             // Show a new table without the deleted entry
             this.refreshTable();
@@ -145,9 +144,7 @@
             throw new Error(JSON.stringify(result, null, 2));
           }
         } catch (error) {
-          console.error(
-            `Unable to retrive customer of id ${customerId}. Err: ${error.message}`
-          );
+          console.error(`Unable to delete customer. Err: ${error.message}`);
         }
       },
       toggleCustomersDetailsPopup(customerId) {
@@ -192,19 +189,13 @@
         this.paginate("reset");
       },
       paginate(input) {
-        console.log(`pagination triggered with input "${input}"`);
-        console.log(`currentPageStartRowNum: "${this.currentPageStartRowNum}"`);
         if (
           input == "prev" &&
           this.currentPageStartRowNum - this.numRowsPerPage >= 0
         ) {
           const newRowStartNum =
             this.currentPageStartRowNum - this.numRowsPerPage;
-          console.log(
-            `New slice range: ${newRowStartNum}-${
-              newRowStartNum + this.numRowsPerPage
-            }`
-          );
+
           this.currentRows = this.customers.slice(
             newRowStartNum,
             newRowStartNum + this.numRowsPerPage
@@ -212,9 +203,6 @@
 
           // update currentPageStartRowNum
           this.currentPageStartRowNum = newRowStartNum;
-          console.log(
-            `New currentPageStartRowNum: "${this.currentPageStartRowNum}"`
-          );
         }
         if (
           input == "next" &&
@@ -223,11 +211,7 @@
         ) {
           const newRowStartNum =
             this.currentPageStartRowNum + this.numRowsPerPage;
-          console.log(
-            `New slice range: ${newRowStartNum}-${
-              newRowStartNum + this.numRowsPerPage
-            }`
-          );
+
           this.currentRows = this.customers.slice(
             newRowStartNum,
             newRowStartNum + this.numRowsPerPage
@@ -254,13 +238,6 @@
           );
           const customers = await response.json();
 
-          console.log(
-            `Sample of customer retrieved on component mount: ${JSON.stringify(
-              [customers[0], customers[5]],
-              null,
-              2
-            )}`
-          );
           this.customers = customers;
         } catch (error) {
           console.error(
@@ -271,8 +248,6 @@
     },
     mounted() {
       if (_.isEmpty(this.customers)) {
-        // The equivalent of calling the parent's function from child
-        console.log(`props.customers is empty. Attempting to get it`);
         this.getCustomers();
       } else {
         // Sometimes, the table does not load when the page refreshes
@@ -297,7 +272,6 @@
   };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   #table-container {
     display: flex;

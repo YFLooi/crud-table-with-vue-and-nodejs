@@ -15,14 +15,13 @@
 <script>
   export default {
     name: "App",
-    components: {},
-    data() {
-      return {
-        data: [],
-      };
+    watch: {
+      $route(to) {
+        document.title = `Customer Management System - ${to.meta.title}`;
+        const link = document.querySelector("[rel='icon']");
+        link.setAttribute("href", to.meta.icon);
+      },
     },
-    methods: {},
-    mounted() {},
   };
 </script>
 

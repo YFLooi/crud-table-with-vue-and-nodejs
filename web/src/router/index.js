@@ -8,16 +8,28 @@ const routes = [
     path: "/",
     name: "CustomerTable",
     component: CustomerTable,
+    meta: {
+      title: "Customers table",
+      icon: "",
+    },
   },
   {
     path: "/customer-registration-form",
     name: "CustomerRegistrationForm",
     component: CustomerRegistrationForm,
+    meta: {
+      title: "Registration form",
+      icon: "",
+    },
   },
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: PageNotFound,
+    meta: {
+      title: "Error",
+      icon: "",
+    },
   },
 ];
 

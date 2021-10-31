@@ -8,6 +8,7 @@
           &nbsp;&nbsp;
           <input
             id="customer-name"
+            placeholder="Shi Fu"
             v-model="customer.name"
             type="text"
             class="rounded"
@@ -21,6 +22,7 @@
           &nbsp;&nbsp;
           <input
             id="customer-email"
+            placeholder="shifu@company.my"
             v-model="customer.email"
             type="text"
             class="rounded"
@@ -98,10 +100,6 @@
     },
     methods: {
       handleSubmit() {
-        console.log(
-          `Customer info recorded: ${JSON.stringify(this.customer, null, 2)}`
-        );
-
         this.submitting = true;
         this.clearStatus();
 
@@ -152,9 +150,6 @@
                 customer.email
               }. Info: ${JSON.stringify(data, null, 2)}`
             );
-
-            // Refresh the display table with new data
-            await this.getCustomers();
           } else {
             console.log(
               `Failed to save customer of email ${
@@ -167,7 +162,6 @@
         }
       },
     },
-    mounted() {},
     computed: {
       // methods to verify form inputs which trigger upon calling handleSubmit()
       invalidName() {
