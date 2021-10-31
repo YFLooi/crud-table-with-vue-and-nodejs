@@ -67,6 +67,9 @@
                 customer.email
               }. Info: ${JSON.stringify(data, null, 2)}`
             );
+
+            // Refresh the display table with new data
+            await this.getCustomers();
           } else {
             console.log(
               `Failed to save customer of email ${
