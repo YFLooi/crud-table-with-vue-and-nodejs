@@ -55,22 +55,26 @@ CustomerRouter.post(
   }
 );
 
-CustomerRouter.post(`/get-customers`, async (req: Request, res: Response) => {
-  // Should expand this to handle pagination later
-  // When database gets really big, won't be practical to load all customers
-  // before displaying main page. First 100 ought to do it
-  console.log(`Getting details on all customers`);
+CustomerRouter.post(
+  `/get-customers`,
+  expressErrorValidation,
+  async (req: Request, res: Response) => {
+    // Should expand this to handle pagination later
+    // When database gets really big, won't be practical to load all customers
+    // before displaying main page. First 100 ought to do it
+    console.log(`Getting details on all customers`);
 
-  try {
-    const customers = await CustomerModel.find({});
+    try {
+      const customers = await CustomerModel.find({});
 
-    res.status(200).json(customers);
-  } catch (err) {
-    res.status(400).json({
-      message: `Failed to retrieve profile of all customers. Err: ${err.message}`,
-    });
+      res.status(200).json(customers);
+    } catch (err) {
+      res.status(400).json({
+        message: `Failed to retrieve profile of all customers. Err: ${err.message}`,
+      });
+    }
   }
-});
+);
 
 CustomerRouter.post(
   `/update-customer-details`,
@@ -81,6 +85,7 @@ CustomerRouter.post(
   body("tradingPermissions")
     .isArray()
     .contains(Object.values(TradingPermissions)),
+  expressErrorValidation,
   async (req: Request, res: Response) => {
     const customerId = req.body.id;
     const updateObj = { ...req.body };
@@ -116,6 +121,7 @@ CustomerRouter.post(
 CustomerRouter.post(
   `/delete-customers`,
   body("id").isArray(),
+  expressErrorValidation,
   async (req: Request, res: Response) => {
     const customerIds: string[] = req.body.id;
 

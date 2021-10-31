@@ -50,7 +50,7 @@
                 aria-label="view-customer-details"
               ></i>
             </td>
-            <td class="cursor-pointer">
+            <td @click="deleteCustomer(customer._id)" class="cursor-pointer">
               <i
                 class="bi-x-octagon"
                 role="img"
@@ -123,6 +123,38 @@
       };
     },
     methods: {
+      // For vue-router implementation
+      // goToCustomerDetailsPage() {
+      //   this.$router.push({ path: "/customer-details" });
+      // },
+      async deleteCustomer(customerId) {
+        try {
+          const response = await fetch(
+            "http://localhost:5000/customer/delete-customers",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                id: [customerId],
+              }),
+              headers: { "Content-type": "application/json; charset=UTF-8" },
+            }
+          );
+          const result = await response.json();
+
+          if (response.status == "200") {
+            console.log(`Sucessfully deleted customer ${customerId}`);
+
+            // Show a new table without the deleted entry
+            this.refreshTable();
+          } else {
+            throw new Error(JSON.stringify(result, null, 2));
+          }
+        } catch (error) {
+          console.error(
+            `Unable to retrive customer of id ${customerId}. Err: ${error.message}`
+          );
+        }
+      },
       toggleCustomersDetailsPopup(customerId) {
         let popupDisplay = document.getElementById("customer-details-display")
           .style.display;
@@ -153,10 +185,6 @@
             "none";
         }
       },
-      // For vue-router implementation
-      // goToCustomerDetailsPage() {
-      //   this.$router.push({ path: "/customer-details" });
-      // },
       refreshTable() {
         console.log(`Request made to refresh table data`);
         this.$emit("getCustomers");
