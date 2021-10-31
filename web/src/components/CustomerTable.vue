@@ -24,43 +24,7 @@
         </button>
       </div>
     </div>
-    <h2>Current customers</h2>
-    <div id="table-container">
-      <table id="customers-table" class="table table-hover table-responsive-sm">
-        <thead>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
-          <th scope="col">View details</th>
-          <th scope="col">Delete</th>
-        </thead>
-        <tbody id="customers-table-body">
-          <tr
-            v-for="(customer, index) in currentRows"
-            :key="[`customer-${index}`]"
-          >
-            <td>{{ customer.name ? customer.name : "n/a" }}</td>
-            <td>{{ customer.email ? customer.email : "n/a" }}</td>
-            <td
-              @click="toggleCustomersDetailsPopup(customer._id)"
-              class="cursor-pointer"
-            >
-              <i
-                class="bi-search"
-                role="img"
-                aria-label="view-customer-details"
-              ></i>
-            </td>
-            <td @click="deleteCustomer(customer._id)" class="cursor-pointer">
-              <i
-                class="bi-x-octagon"
-                role="img"
-                aria-label="delete-customer"
-              ></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <h2 class="my-3">Current customers</h2>
     <div id="nav" class="d-flex flex-row justify-content-end px-3 py-3">
       <div class="mx-1">
         <button
@@ -102,6 +66,42 @@
         </div>
       </div>
     </div>
+    <div id="table-container">
+      <table id="customers-table" class="table table-hover table-responsive-sm">
+        <thead>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">View details</th>
+          <th scope="col">Delete</th>
+        </thead>
+        <tbody id="customers-table-body">
+          <tr
+            v-for="(customer, index) in currentRows"
+            :key="[`customer-${index}`]"
+          >
+            <td>{{ customer.name ? customer.name : "n/a" }}</td>
+            <td>{{ customer.email ? customer.email : "n/a" }}</td>
+            <td
+              @click="toggleCustomersDetailsPopup(customer._id)"
+              class="cursor-pointer"
+            >
+              <i
+                class="bi-search"
+                role="img"
+                aria-label="view-customer-details"
+              ></i>
+            </td>
+            <td @click="deleteCustomer(customer._id)" class="cursor-pointer">
+              <i
+                class="bi-x-octagon"
+                role="img"
+                aria-label="delete-customer"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -111,11 +111,10 @@
 
   export default {
     name: "CustomerTable",
-    props: {
-      customers: Array,
-    },
+    props: {},
     data() {
       return {
+        customers: [],
         numRowsPerPage: 5,
         currentPageStartRowNum: 0,
         currentRows: [],
@@ -123,10 +122,6 @@
       };
     },
     methods: {
-      // For vue-router implementation
-      // goToCustomerDetailsPage() {
-      //   this.$router.push({ path: "/customer-details" });
-      // },
       async deleteCustomer(customerId) {
         try {
           const response = await fetch(
@@ -187,7 +182,7 @@
       },
       refreshTable() {
         console.log(`Request made to refresh table data`);
-        this.$emit("getCustomers");
+        this.getCustomers();
       },
       changeRowsPerPage(rowsPerPage) {
         console.log(`changeResultsPerPage to ${rowsPerPage}`);
@@ -247,12 +242,38 @@
           this.currentPageStartRowNum = 0;
         }
       },
+      async getCustomers() {
+        try {
+          const response = await fetch(
+            "http://localhost:5000/customer/get-customers",
+            {
+              method: "POST",
+              body: JSON.stringify({}),
+              headers: { "Content-type": "application/json; charset=UTF-8" },
+            }
+          );
+          const customers = await response.json();
+
+          console.log(
+            `Sample of customer retrieved on component mount: ${JSON.stringify(
+              [customers[0], customers[5]],
+              null,
+              2
+            )}`
+          );
+          this.customers = customers;
+        } catch (error) {
+          console.error(
+            `Unable to retrive customer info. Err: ${error.message}`
+          );
+        }
+      },
     },
     mounted() {
       if (_.isEmpty(this.customers)) {
         // The equivalent of calling the parent's function from child
         console.log(`props.customers is empty. Attempting to get it`);
-        this.$emit("getCustomers");
+        this.getCustomers();
       } else {
         // Sometimes, the table does not load when the page refreshes
         // although props.customers is loaded. This solves it
@@ -296,7 +317,7 @@
     top: 0;
     right: 0;
     min-width: 100vw;
-    min-height: 100vh;
+    min-height: 125%;
     background-color: rgb(0, 0, 0, 0.5);
   }
   #customer-details-card {

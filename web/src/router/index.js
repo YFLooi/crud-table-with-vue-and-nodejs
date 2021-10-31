@@ -6,7 +6,7 @@ import PageNotFound from "../components/PageNotFound";
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "CustomerTable",
     component: CustomerTable,
   },
   {

@@ -1,95 +1,33 @@
 <template>
-  <div>
+  <div id="app">
     <h1>Customer management system</h1>
-    <CustomerTable :customers="customers" @getCustomers="getCustomers" />
-    <CustomerRegistrationForm @add:customer="addCustomer" />
+    <nav>
+      <router-link to="/">Table of customers</router-link>
+      &nbsp;&nbsp;
+      <router-link to="/customer-registration-form"
+        >Customer Registration Form</router-link
+      >
+    </nav>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import CustomerTable from "./components/CustomerTable.vue";
-  import CustomerRegistrationForm from "./components/CustomerRegistrationForm.vue";
-
   export default {
     name: "App",
-    components: {
-      CustomerTable,
-      CustomerRegistrationForm,
-    },
+    components: {},
     data() {
       return {
-        customers: [],
+        data: [],
       };
     },
-    methods: {
-      async getCustomers() {
-        try {
-          const response = await fetch(
-            "http://localhost:5000/customer/get-customers",
-            {
-              method: "POST",
-              body: JSON.stringify({}),
-              headers: { "Content-type": "application/json; charset=UTF-8" },
-            }
-          );
-          const customers = await response.json();
-
-          console.log(
-            `Sample of customer retrieved on component mount: ${JSON.stringify(
-              [customers[0], customers[5]],
-              null,
-              2
-            )}`
-          );
-          this.customers = customers;
-        } catch (error) {
-          console.error(
-            `Unable to retrive customer info. Err: ${error.message}`
-          );
-        }
-      },
-      async addCustomer(customer) {
-        try {
-          const response = await fetch(
-            "http://localhost:5000/customer/register-new-customer",
-            {
-              method: "POST",
-              body: JSON.stringify(customer),
-              headers: { "Content-type": "application/json; charset=UTF-8" },
-            }
-          );
-          const data = await response.json();
-          const status = response.status;
-
-          if (status == "200") {
-            console.log(
-              `Successfully saved customer of email ${
-                customer.email
-              }. Info: ${JSON.stringify(data, null, 2)}`
-            );
-
-            // Refresh the display table with new data
-            await this.getCustomers();
-          } else {
-            console.log(
-              `Failed to save customer of email ${
-                customer.email
-              }. Info: ${JSON.stringify(data, null, 2)}`
-            );
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      },
-    },
-    mounted() {
-      // loads table of customers on page load
-      this.getCustomers();
-    },
+    methods: {},
+    mounted() {},
   };
 </script>
 
 <style>
+  /* Overall styles for the enitre #app */
   #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

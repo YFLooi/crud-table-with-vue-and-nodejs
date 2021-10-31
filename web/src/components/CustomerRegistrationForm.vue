@@ -120,7 +120,8 @@
           return;
         }
 
-        this.$emit("add:customer", this.customer);
+        // Creates customer profile in db
+        this.addCustomer(this.customer);
 
         console.log(
           `New customer info submitted successfully. Setting this.success == true`
@@ -131,6 +132,39 @@
         this.success = false;
         this.error = false;
         this.errorMsg = "";
+      },
+      async addCustomer(customer) {
+        try {
+          const response = await fetch(
+            "http://localhost:5000/customer/register-new-customer",
+            {
+              method: "POST",
+              body: JSON.stringify(customer),
+              headers: { "Content-type": "application/json; charset=UTF-8" },
+            }
+          );
+          const data = await response.json();
+          const status = response.status;
+
+          if (status == "200") {
+            console.log(
+              `Successfully saved customer of email ${
+                customer.email
+              }. Info: ${JSON.stringify(data, null, 2)}`
+            );
+
+            // Refresh the display table with new data
+            await this.getCustomers();
+          } else {
+            console.log(
+              `Failed to save customer of email ${
+                customer.email
+              }. Info: ${JSON.stringify(data, null, 2)}`
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        }
       },
     },
     mounted() {},
