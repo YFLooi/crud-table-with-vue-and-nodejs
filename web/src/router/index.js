@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import CustomerRegistrationForm from "../components/CustomerRegistrationForm";
-import CustomerTable from "../components/CustomerTable";
+import CustomerTable from "../components/CustomerTable/CustomerTable";
 import PageNotFound from "../components/PageNotFound";
 
 const routes = [

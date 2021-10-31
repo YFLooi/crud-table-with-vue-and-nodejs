@@ -1,29 +1,9 @@
 <template>
   <div>
-    <div id="customer-details-display">
-      <div id="customer-details-card" class="px-3 py-3">
-        <h2>Customer details</h2>
-        <table class="table table-hover">
-          <tbody id="customers-table-body">
-            <tr
-              v-for="(value, key) in selectedCustomersDetails"
-              :key="[`customer-${key}`]"
-            >
-              <td>{{ key.toUpperCase().trim() }}</td>
-              <td>{{ value ? value : "n/a" }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <button
-          type="button"
-          class="btn btn-primary mx-1"
-          style="width: 6rem"
-          @click="toggleCustomersDetailsPopup()"
-        >
-          Close
-        </button>
-      </div>
-    </div>
+    <customer-details-display
+      :selectedCustomersDetails="selectedCustomersDetails"
+      @toggleCustomersDetailsPopup="toggleCustomersDetailsPopup"
+    />
     <h2 class="my-3">Current customers</h2>
     <div id="nav" class="d-flex flex-row justify-content-end px-3 py-3">
       <div class="mx-1">
@@ -108,13 +88,17 @@
 <script>
   import _ from "lodash";
   import moment from "moment";
+  import CustomerDetailsDisplay from "./CustomerDetailsDisplay";
 
   export default {
     name: "CustomerTable",
+    components: {
+      CustomerDetailsDisplay,
+    },
     data() {
       return {
         customers: [],
-        numRowsPerPage: 10,
+        numRowsPerPage: 5,
         currentPageStartRowNum: 0,
         currentRows: [],
         selectedCustomersDetails: {},
@@ -148,10 +132,7 @@
         }
       },
       toggleCustomersDetailsPopup(customerId) {
-        let popupDisplay = document.getElementById("customer-details-display")
-          .style.display;
-
-        if (popupDisplay == "none") {
+        if (customerId) {
           const customersDetails = this.customers.filter(
             (customer) => customer._id == customerId
           )[0];
@@ -169,12 +150,8 @@
               "DD-MMM-YYYY"
             ),
           };
-
-          document.getElementById("customer-details-display").style.display =
-            "block";
         } else {
-          document.getElementById("customer-details-display").style.display =
-            "none";
+          this.selectedCustomersDetails = {};
         }
       },
       refreshTable() {
