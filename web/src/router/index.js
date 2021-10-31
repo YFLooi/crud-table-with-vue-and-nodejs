@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import CustomerDetails from "../components/CustomerDetails";
+import CustomerRegistrationForm from "../components/CustomerRegistrationForm";
 import CustomerTable from "../components/CustomerTable";
 import PageNotFound from "../components/PageNotFound";
 
@@ -10,9 +10,9 @@ const routes = [
     component: CustomerTable,
   },
   {
-    path: "/customer-details",
-    name: "CustomerDetails",
-    component: CustomerDetails,
+    path: "/customer-registration-form",
+    name: "CustomerRegistrationForm",
+    component: CustomerRegistrationForm,
   },
   {
     path: "/:pathMatch(.*)*",

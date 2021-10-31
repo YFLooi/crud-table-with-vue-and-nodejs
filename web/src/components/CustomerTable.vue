@@ -1,6 +1,30 @@
 <template>
   <div>
-    <h1>Current customers</h1>
+    <div id="customer-details-display">
+      <div id="customer-details-card" class="px-3 py-3">
+        <h2>Customer details</h2>
+        <table class="table table-hover">
+          <tbody id="customers-table-body">
+            <tr
+              v-for="(value, key) in selectedCustomersDetails"
+              :key="[`customer-${key}`]"
+            >
+              <td>{{ key.toUpperCase().trim() }}</td>
+              <td>{{ value ? value : "n/a" }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <button
+          type="button"
+          class="btn btn-primary mx-1"
+          style="width: 6rem"
+          @click="toggleCustomersDetailsPopup()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <h2>Current customers</h2>
     <div id="table-container">
       <table id="customers-table" class="table table-hover table-responsive-sm">
         <thead>
@@ -16,14 +40,17 @@
           >
             <td>{{ customer.name ? customer.name : "n/a" }}</td>
             <td>{{ customer.email ? customer.email : "n/a" }}</td>
-            <td @click="goToCustomerDetailsPage()">
+            <td
+              @click="toggleCustomersDetailsPopup(customer._id)"
+              class="cursor-pointer"
+            >
               <i
                 class="bi-search"
                 role="img"
                 aria-label="view-customer-details"
               ></i>
             </td>
-            <td>
+            <td class="cursor-pointer">
               <i
                 class="bi-x-octagon"
                 role="img"
@@ -80,6 +107,7 @@
 
 <script>
   import _ from "lodash";
+  import moment from "moment";
 
   export default {
     name: "CustomerTable",
@@ -91,9 +119,40 @@
         numRowsPerPage: 5,
         currentPageStartRowNum: 0,
         currentRows: [],
+        selectedCustomersDetails: {},
       };
     },
     methods: {
+      toggleCustomersDetailsPopup(customerId) {
+        let popupDisplay = document.getElementById("customer-details-display")
+          .style.display;
+
+        if (popupDisplay == "none") {
+          const customersDetails = this.customers.filter(
+            (customer) => customer._id == customerId
+          )[0];
+          this.selectedCustomersDetails = {
+            id: customersDetails._id,
+            name: customersDetails.name,
+            email: customersDetails.email,
+            "trading permissions": customersDetails.tradingPermissions
+              .join(", ")
+              .toUpperCase(),
+            "created at": moment(customersDetails.createdAt).format(
+              "DD-MMM-YYYY"
+            ),
+            "updated on": moment(customersDetails.updatedAt).format(
+              "DD-MMM-YYYY"
+            ),
+          };
+
+          document.getElementById("customer-details-display").style.display =
+            "block";
+        } else {
+          document.getElementById("customer-details-display").style.display =
+            "none";
+        }
+      },
       // For vue-router implementation
       // goToCustomerDetailsPage() {
       //   this.$router.push({ path: "/customer-details" });
@@ -166,6 +225,10 @@
         // The equivalent of calling the parent's function from child
         console.log(`props.customers is empty. Attempting to get it`);
         this.$emit("getCustomers");
+      } else {
+        // Sometimes, the table does not load when the page refreshes
+        // although props.customers is loaded. This solves it
+        this.refreshTable();
       }
     },
     watch: {
@@ -197,6 +260,25 @@
   }
   .num-rows-button {
     color: blue;
+    cursor: pointer;
+  }
+  #customer-details-display {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: rgb(0, 0, 0, 0.5);
+  }
+  #customer-details-card {
+    position: relative;
+    background-color: rgb(255, 255, 255, 1);
+    width: 90vw;
+    margin: 5rem auto;
+    min-height: 20vh;
+  }
+  .cursor-pointer {
     cursor: pointer;
   }
 </style>
